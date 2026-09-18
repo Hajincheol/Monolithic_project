@@ -38,7 +38,7 @@ const ProductItem = (props) => {
     const productDelete = async() => {
         
         try {
-            const res = await fetch(`http://localhost:8081/product/delete/${id}`, {
+            const res = await fetch(`http://localhost:8081/product/changeStatus/${id}`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -75,30 +75,27 @@ const ProductItem = (props) => {
     }
 
     return (
-        <div>
-            <Card>
-                <Card.Header>번호 : {id}</Card.Header>
-                <Card.Body>
-                    <Card.Text>이름 : {name}</Card.Text>
-                    <Card.Text>분류 : {category}</Card.Text>
-                    <Card.Text>가격 : {price}</Card.Text>
-                    <Card.Text>수량 : {stockQuantity}</Card.Text>
-                    
-                    {/* 본인 일시 수정, 삭제 / 아닐 경우 구매 */
-                    localStorage.getItem("id") === memberId
-                    ?
-                        <>
-                            <Link to={"/product/update/" + id} className="btn btn-primary">수정</Link>
-                            {' '}
-                            <Button variant='danger' onClick={productDelete}>삭제</Button>
-                        </>
-                    :
-                        <Link to={"/order/create/" + id} className="btn btn-primary">구매</Link>
-                    }
-                </Card.Body>
-            </Card>
-            <br />
-        </div>
+        <Card>
+            <Card.Header>번호 : {id}</Card.Header>
+            <Card.Body>
+                <Card.Text>이름 : {name}</Card.Text>
+                <Card.Text>분류 : {category}</Card.Text>
+                <Card.Text>가격 : {price}</Card.Text>
+                <Card.Text>수량 : {stockQuantity}</Card.Text>
+                
+                {/* 본인 일시 수정, 삭제 / 아닐 경우 구매 */
+                localStorage.getItem("id") === memberId
+                ?
+                    <>
+                        <Link to={"/product/update/" + id} className="btn btn-primary">수정</Link>
+                        {' '}
+                        <Button variant='danger' onClick={productDelete}>삭제</Button>
+                    </>
+                :
+                    <Link to={"/order/create/" + id} className="btn btn-primary">구매</Link>
+                }
+            </Card.Body>
+        </Card>
     );
 };
 

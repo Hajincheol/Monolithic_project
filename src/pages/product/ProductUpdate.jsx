@@ -137,7 +137,7 @@ const ProductUpdate = () => {
         <div>
             <br />
             <br />
-            <Container>
+            <Container style={{ maxWidth: '40rem' }}>
                 <Card>
                     <Card.Body>
                         <Card.Title className="text-center">제품 수정</Card.Title>

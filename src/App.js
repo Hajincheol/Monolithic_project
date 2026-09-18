@@ -8,6 +8,7 @@ import ProductUpdate from './pages/product/ProductUpdate';
 import OrderCreate from './pages/order/OrderCreate';
 import ProductCreate from './pages/product/ProductCreate';
 import Footer from './pages/common/Footer';
+import MemberList from './pages/member/admin/MemberList';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/member/login" element={<Login />} />
           <Route path="/member/signup" element={<SignUp />} />
           <Route path="/member/mypage" element={<MyPage />} />
+          <Route path="/member/list" element={<MemberList />} />
 
           <Route path="/product/create" element={<ProductCreate />} />
           <Route path="/product/list" element={<ProductList />} />

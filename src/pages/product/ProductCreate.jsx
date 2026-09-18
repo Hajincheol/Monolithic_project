@@ -90,7 +90,7 @@ const ProductCreate = () => {
         <div>
             <br />
             <br />
-            <Container>
+            <Container style={{ maxWidth: '30rem'}}>
                 <Card>
                     <Card.Body>
                         <Card.Title className="text-center">제품 등록</Card.Title>

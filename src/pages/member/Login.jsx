@@ -23,7 +23,7 @@ const Login = () => {
             });
 
             if(!res.ok) {
-                console.log("통신 실패");
+                alert("로그인 실패");
                 return;
             }
 
@@ -43,7 +43,7 @@ const Login = () => {
         <div>
             <br />
             <br />
-            <Container>
+            <Container style={{ maxWidth: "40rem" }}>
                 <Card>
                     <Card.Body>
                         <Card.Title className="text-center">로그인</Card.Title>

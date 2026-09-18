@@ -143,15 +143,16 @@ const OrderCreate = (props) => {
         <div>
             <br />
             <br />
-            <Container>
+            <Container style={{ maxWidth: '40rem' }}>
                 <Card>
                     <Card.Header>제품 구매</Card.Header>
                     <Card.Body>
                         <Card.Text>이름 : {product.name}</Card.Text>
                         <Card.Text>분류 : {product.category}</Card.Text>
                         <Card.Text>가격 : {product.price}</Card.Text>
+                        <Card.Text>수량 : {product.stockQuantity}</Card.Text>
                         <div className="d-flex align-items-center">
-                            <Card.Text className='me-2'>수량 :</Card.Text>
+                            <Card.Text className='me-2'>주문 수량 :</Card.Text>
                             <Pagination>
                                 {order.productCount > 1
                                 ?

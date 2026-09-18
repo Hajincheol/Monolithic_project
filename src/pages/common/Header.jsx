@@ -1,11 +1,131 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
 
-    const condition = localStorage.getItem("accessToken");  // accessToken 여부
-    const navi = useNavigate();                             // navigate
+    const navi = useNavigate();     // navigate
+    const[isAdmin, setIsAdmin] = useState(false);
+
+    // 사용자가 admin인지 확인
+    // 403 => 사용자가 권한 없음 => user
+    useEffect(() => {
+        
+        if(localStorage.getItem("accessToken") !== null) {
+
+            fetch(`http://localhost:8081/member/admin`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                }
+            })
+            .then((res) => {
+
+                if(res.ok) {
+                    setIsAdmin(true);
+
+                } else if(res.status === 401) {
+
+                    // 인증 에러(401)가 발생시 accessToken이 만료되었다는 에러이니 재발급
+                    if(window.confirm("로그인 시간이 만료되었습니다. 연장하시겠습니까?")) {
+                        newAccessToken();
+
+                    } else {
+
+                        alert("로그아웃 되셨습니다.");
+
+                        localStorage.removeItem("accessToken");
+                        localStorage.removeItem("refreshToken");
+                        localStorage.removeItem("id");
+
+                        navi("/");
+                    }
+                } else if(res.status === 403) {
+
+                    // 권한이 없는 사용자 => USER
+                    setIsAdmin(false);
+                    console.clear();
+
+                } else {
+                    console.log("에러 발생");
+                }
+            })
+            .catch((err) => console.log(err));
+        } else {
+
+            setIsAdmin(false);
+        }
+    }, [localStorage.getItem("accessToken")]);
+
+    // 사용자 이용 가능 상태 확인
+    useEffect(() => {
+
+        // removeItem했는데 localStorage.getItem("accessToken")이 해당 값을 가지고 있음
+        if(localStorage.getItem("accessToken") !== null) {
+            
+            fetch(`http://localhost:8081/member/memberStatus`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                }
+            })
+            .then((res) => {
+
+                if(res.status === 401) {
+                    
+                    // 인증 에러(401)가 발생시 accessToken이 만료되었다는 에러이니 재발급
+                    if(window.confirm("로그인 시간이 만료되었습니다. 연장하시겠습니까?")) {
+                        newAccessToken();
+
+                    } else {
+
+                        alert("로그아웃 되셨습니다.");
+
+                        localStorage.removeItem("accessToken");
+                        localStorage.removeItem("refreshToken");
+                        localStorage.removeItem("id");
+
+                        navi("/");
+                    }
+
+                } else if(res.status === 403) {
+                    alert("당신은 강제 퇴장되셨습니다.");
+
+                    handleLogout();
+
+                    console.clear();
+                }
+            });
+        }
+    });
+
+    // 만료된 accessToken을 새로 발급하기
+    const newAccessToken = async() => {
+
+        try {
+            const res = await fetch(`http://localhost:8081/member/refresh-token`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json;charset=utf-8"
+                },
+                credentials: "include",
+                body: JSON.stringify({'refreshToken': localStorage.getItem("refreshToken")})
+            });
+
+            if(!res.ok) {
+                alert("인증 오류 발생");
+
+            } else {
+                const data = await res.json();
+                localStorage.setItem("accessToken", data.accessToken);
+            }
+
+        } catch {
+            alert("인증 오류");
+        }
+    }
 
     // 로그아웃
     const handleLogout = async() => {
@@ -46,12 +166,17 @@ const Header = () => {
                         navbarScroll
                     >
 
-                        {condition!==null ?
+                        {localStorage.getItem("accessToken") !== null ?
                         (
                             <>
                                 <Link to="/product/create" className="nav-link">제품등록</Link>
                                 <Link to="/product/list" className="nav-link">제품목록</Link>
                                 <Link to="/member/mypage" className="nav-link">마이페이지</Link>
+
+                                {isAdmin &&
+                                    <Link to="/member/list" className="nav-link">멤버보기</Link>
+                                }
+
                                 <Link onClick={handleLogout} className="nav-link">로그아웃</Link>
                             </>
                         )
